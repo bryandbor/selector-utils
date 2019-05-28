@@ -54,5 +54,12 @@
   ],
   "dependencies": {
     "deep-equal": "^1.0.1"
-  }
+  },
+  "keywords": [
+    "selector",
+    "redux",
+    "reselect",
+    "utils",
+    "state"
+  ]
 }

@@ -24,6 +24,7 @@ import {
   getIsGreaterThanOrEqual,
   getIsEqual,
   joinStrings,
+  // There are many more utils exported from this library, this is just a subset used for demo purposes
 } from '@bryandbor/selector-utils';
 
 export const getNumberOfFriends = createSelector(
