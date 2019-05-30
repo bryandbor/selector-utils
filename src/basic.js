@@ -1,14 +1,17 @@
 import equal from 'deep-equal';
 
-/**
- * Selector which checks if value matches expected value
- * @param {any} expectedResult The value with which the result will be compared
- * @returns {boolean} True if values match, false otherwise
- */
-export const getIsEqual = expectedResult => value =>
+const isEqual = (expectedResult, value) =>
   typeof expectedResult !== 'object'
     ? value === expectedResult
     : equal(value, expectedResult, {strict: true});
+
+/**
+ * Selector which checks if value matches expected value
+ * @param {...any} expectedResult The value with which the result will be compared
+ * @returns {boolean} True if values match, false otherwise
+ */
+export const getIsEqual = expectedResult => (...values) =>
+  values.findIndex(value => !isEqual(expectedResult, value)) === -1;
 
 /**
  * Selector which filters all values for only single occurrences

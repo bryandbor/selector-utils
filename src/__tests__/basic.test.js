@@ -6,74 +6,129 @@ describe(`${prefix} | getIsEqual`, () => {
   test('returns true correctly', () => {
     const falseBoolSelector = getIsEqual(false);
     expect(falseBoolSelector(false)).toEqual(true);
+    expect(falseBoolSelector(false, false)).toEqual(true);
     const trueBoolSelector = getIsEqual(true);
     expect(trueBoolSelector(true)).toEqual(true);
+    expect(trueBoolSelector(true, true)).toEqual(true);
 
     const stringSelector = getIsEqual('abc');
     expect(stringSelector('abc')).toEqual(true);
+    expect(stringSelector('abc', 'abc')).toEqual(true);
 
     const intSelector = getIsEqual(7);
     expect(intSelector(7)).toEqual(true);
+    expect(intSelector(7, 7)).toEqual(true);
 
     const floatSelector = getIsEqual(4 / 3);
     expect(floatSelector(4 / 3)).toEqual(true);
+    expect(floatSelector(4 / 3, 4 / 3)).toEqual(true);
 
     const objArr = [1, 7];
     const objObj = {test: 'value'};
     const objSelector = getIsEqual({objArr, objObj, str: 'abc', boo: true});
     expect(objSelector({objArr, objObj, str: 'abc', boo: true})).toEqual(true);
+    expect(
+      objSelector(
+        {objArr, objObj, str: 'abc', boo: true},
+        {objArr, objObj, str: 'abc', boo: true}
+      )
+    ).toEqual(true);
 
     const arrSelector = getIsEqual([objArr, objArr, 16, objObj, true]);
     expect(arrSelector([objArr, objArr, 16, objObj, true])).toEqual(true);
+    expect(
+      arrSelector(
+        [objArr, objArr, 16, objObj, true],
+        [objArr, objArr, 16, objObj, true]
+      )
+    ).toEqual(true);
   });
 
   test('returns false correctly', () => {
     const falseBoolSelector = getIsEqual(false);
     expect(falseBoolSelector(true)).toEqual(false);
+    expect(falseBoolSelector(false, 0)).toEqual(false);
+    expect(falseBoolSelector(false, null)).toEqual(false);
     const trueBoolSelector = getIsEqual(true);
     expect(trueBoolSelector(false)).toEqual(false);
+    expect(trueBoolSelector(true, false)).toEqual(false);
+    expect(trueBoolSelector(true, 1)).toEqual(false);
+    expect(trueBoolSelector(true, 'abc')).toEqual(false);
 
     const stringSelector = getIsEqual('abc');
     expect(stringSelector('')).toEqual(false);
     expect(stringSelector('cba')).toEqual(false);
     expect(stringSelector('abcd')).toEqual(false);
+    expect(stringSelector('abc', '')).toEqual(false);
+    expect(stringSelector('abc', 'cba')).toEqual(false);
+    expect(stringSelector('abc', 'abcd')).toEqual(false);
 
     const intSelector = getIsEqual(7);
     expect(intSelector(0)).toEqual(false);
     expect(intSelector(70)).toEqual(false);
+    expect(intSelector(7, 0, 7)).toEqual(false);
 
     const floatSelector = getIsEqual(4 / 3);
     expect(floatSelector(1.33)).toEqual(false);
+    expect(floatSelector(1.33, 4 / 3)).toEqual(false);
 
     const objArr = [1, 7];
     const objObj = {test: 'value'};
     const objSelector = getIsEqual({objArr, objObj, str: 'abc', boo: true});
-    expect(objSelector({objArr, objObj, str: 'abc', boo: false})).toEqual(
-      false
-    );
-    expect(objSelector({objArr, objObj, str: 'abcd', boo: true})).toEqual(
-      false
-    );
     expect(
-      objSelector({objArr: [...objArr, true], objObj, str: 'abc', boo: true})
+      objSelector(
+        {objArr, objObj, str: 'abc', boo: true},
+        {objArr, objObj, str: 'abc', boo: false}
+      )
     ).toEqual(false);
     expect(
-      objSelector({
-        objArr,
-        objObj: {...objObj, other: 'thing'},
-        str: 'abc',
-        boo: true,
-      })
+      objSelector(
+        {objArr, objObj, str: 'abc', boo: true},
+        {objArr, objObj, str: 'abcd', boo: true}
+      )
+    ).toEqual(false);
+    expect(
+      objSelector(
+        {objArr, objObj, str: 'abc', boo: true},
+        {objArr: [...objArr, true], objObj, str: 'abc', boo: true}
+      )
+    ).toEqual(false);
+    expect(
+      objSelector(
+        {
+          objArr,
+          objObj: {...objObj, other: 'thing'},
+          str: 'abc',
+          boo: true,
+        },
+        {objArr, objObj, str: 'abc', boo: true}
+      )
     ).toEqual(false);
 
     const arrSelector = getIsEqual([objArr, objArr, 16, objObj, true]);
-    expect(arrSelector([objArr, objArr, 16, objObj, false])).toEqual(false);
-    expect(arrSelector([objArr, objArr, 17, objObj, true])).toEqual(false);
-    expect(arrSelector([[...objArr, 'c'], objArr, 16, objObj, true])).toEqual(
-      false
-    );
     expect(
-      arrSelector([objArr, {...objArr, other: 'thing'}, 16, objObj, true])
+      arrSelector(
+        [objArr, objArr, 16, objObj, true],
+        [objArr, objArr, 16, objObj, false]
+      )
+    ).toEqual(false);
+    expect(
+      arrSelector(
+        [objArr, objArr, 17, objObj, true],
+        [objArr, objArr, 16, objObj, true]
+      )
+    ).toEqual(false);
+    expect(
+      arrSelector(
+        [objArr, objArr, 16, objObj, true],
+        [[...objArr, 'c'], objArr, 16, objObj, true]
+      )
+    ).toEqual(false);
+    expect(
+      arrSelector(
+        [objArr, {...objArr, other: 'thing'}, 16, objObj, true],
+        [objArr, objArr, 16, objObj, true]
+      )
     ).toEqual(false);
   });
 });
